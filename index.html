@@ -320,6 +320,62 @@ footer p{font-size:.75rem;color:var(--muted)}
   footer{flex-direction:column;gap:.5rem;text-align:center}
 }
 </style>
+  position:fixed;
+  inset:0;
+  z-index:999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#000;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .8s ease;
+}
+#egg.egg-on{opacity:1;pointer-events:all}
+#egg-cv{position:absolute;inset:0;width:100%;height:100%}
+#egg-inner{
+  position:relative;
+  z-index:2;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:1.2rem;
+}
+#egg-name{
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  font-size:clamp(3.5rem,12vw,9rem);
+  letter-spacing:.08em;
+  color:#fff;
+  animation:glow 3s ease-in-out infinite;
+}
+@keyframes glow{
+  0%,100%{text-shadow:0 0 20px rgba(255,180,220,.4),0 0 60px rgba(255,140,200,.15)}
+  50%{text-shadow:0 0 40px rgba(255,180,220,.7),0 0 100px rgba(255,140,200,.3)}
+}
+#egg-msg{
+  font-family:'DM Mono',monospace;
+  font-weight:300;
+  font-size:clamp(1rem,3vw,1.6rem);
+  color:rgba(255,200,230,.8);
+  letter-spacing:.25em;
+}
+#egg-close{
+  position:absolute;
+  top:1.5rem;right:1.5rem;
+  z-index:3;
+  background:none;
+  border:1px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.4);
+  font-size:.9rem;
+  width:36px;height:36px;
+  border-radius:50%;
+  cursor:pointer;
+  transition:all .2s;
+}
+#egg-close:hover{color:#fff;border-color:rgba(255,255,255,.6)}
+</style>
 </head>
 <body>
 
@@ -503,6 +559,15 @@ footer p{font-size:.75rem;color:var(--muted)}
   <p>France</p>
 </footer>
 
+<div id="egg">
+  <canvas id="egg-cv"></canvas>
+  <div id="egg-inner">
+    <div id="egg-name">NESRINE</div>
+    <div id="egg-msg">je t'aime ♡</div>
+  </div>
+  <button id="egg-close">✕</button>
+</div>
+
 <script>
 const cv = document.getElementById('cv')
 const cx = cv.getContext('2d')
@@ -563,11 +628,63 @@ function draw() {
 resize(); init(); draw()
 addEventListener('resize', () => { resize(); init() })
 
+const ec = document.getElementById('egg-cv')
+const ex = ec.getContext('2d')
+let epts = []
+
+function eggResize() { ec.width = innerWidth; ec.height = innerHeight }
+function eggInit() {
+  epts = Array.from({length: 200}, () => ({
+    x: Math.random() * ec.width,
+    y: Math.random() * ec.height,
+    r: Math.random() * 1.5 + 0.3,
+    a: Math.random() * 0.7 + 0.1,
+    dx: (Math.random() - 0.5) * 0.3,
+    dy: (Math.random() - 0.5) * 0.3,
+    da: (Math.random() - 0.5) * 0.004
+  }))
+}
+function eggDraw() {
+  ex.clearRect(0, 0, ec.width, ec.height)
+  for (const p of epts) {
+    ex.beginPath()
+    ex.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+    const pink = Math.random() > 0.85
+    ex.fillStyle = pink ? `rgba(255,180,220,${p.a})` : `rgba(255,255,255,${p.a})`
+    ex.fill()
+    p.x += p.dx; p.y += p.dy; p.a += p.da
+    if (p.a <= 0.05) p.da = Math.abs(p.da)
+    if (p.a >= 0.8)  p.da = -Math.abs(p.da)
+    if (p.x < 0) p.x = ec.width
+    if (p.x > ec.width) p.x = 0
+    if (p.y < 0) p.y = ec.height
+    if (p.y > ec.height) p.y = 0
+  }
+  requestAnimationFrame(eggDraw)
+}
+eggResize(); eggInit(); eggDraw()
+addEventListener('resize', () => { eggResize(); eggInit() })
+
 const io = new IntersectionObserver(
   es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('on') }),
   {threshold: 0.1}
 )
 document.querySelectorAll('.fi').forEach(el => io.observe(el))
+
+let clicks = 0, timer
+document.querySelector('.logo').addEventListener('click', e => {
+  e.preventDefault()
+  clicks++
+  clearTimeout(timer)
+  timer = setTimeout(() => { clicks = 0 }, 1800)
+  if (clicks >= 5) {
+    clicks = 0
+    document.getElementById('egg').classList.add('egg-on')
+  }
+})
+document.getElementById('egg-close').addEventListener('click', () => {
+  document.getElementById('egg').classList.remove('egg-on')
+})
 </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Waze LP — Développeur Web</title>
+  <title>waze LP — Développeur Web</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <style>
@@ -34,6 +34,17 @@
       line-height: 1.7;
       min-height: 100vh;
     }
+
+    /* CANVAS ÉTOILES */
+    #stars-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    nav, section, footer { position: relative; z-index: 1; }
 
     /* NAV */
     nav {
@@ -415,9 +426,12 @@
 </head>
 <body>
 
+  <!-- CANVAS ÉTOILES -->
+  <canvas id="stars-canvas"></canvas>
+
   <!-- NAV -->
   <nav>
-    <a href="#hero" class="nav-logo">Waze LP</a>
+    <a href="#hero" class="nav-logo">waze LP</a>
     <ul class="nav-links">
       <li><a href="#about">À propos</a></li>
       <li><a href="#skills">Compétences</a></li>
@@ -434,9 +448,8 @@
       Disponible pour de nouveaux projets
     </div>
     <h1 class="hero-name">
-      Ton<br />
-      <em>Prénom</em><br />
-      Nom
+      waze<br />
+      <em>LP</em>
     </h1>
     <p class="hero-desc">
       Développeur web full-stack passionné par la création d'expériences numériques propres, performantes et accessibles.
@@ -454,10 +467,10 @@
       <div class="about-text">
         <h2>Construire des choses qui ont du sens.</h2>
         <p>
-          Je suis développeur web basé a Geneve, spécialisé dans la création web modernes, de la conception à la mise en production.
+          Je suis développeur web basé en France, spécialisé dans la création d'applications web modernes, de la conception à la mise en production.
         </p>
         <p>
-          Mon approche : du code propre, une attention particulière aux détails qui font la différence, une aide via ia.
+          Mon approche : du code propre, une UX réfléchie, et une attention particulière aux détails qui font la différence.
         </p>
         <br />
         <a href="#contact" class="btn btn-outline" style="display: inline-flex;">Travailler ensemble →</a>
@@ -537,12 +550,13 @@
       <a class="project-item" href="#" target="_blank">
         <div class="project-num">01</div>
         <div class="project-info">
-          <h3>Cofee Alarm</h3>
-          <p>Création d'un site web qui apporte un changement marquant en terme de ventes et de visites.</p>
+          <h3>Cofee Arma</h3>
+          <p>Site web vitrine et e-commerce pour une torréfaction artisanale. Catalogue de produits, système de commande en ligne et interface d'administration pour la gestion des stocks.</p>
           <div class="project-tags">
             <span class="tag">React</span>
             <span class="tag">Node.js</span>
             <span class="tag">PostgreSQL</span>
+            <span class="tag">Stripe</span>
           </div>
         </div>
         <div class="project-arrow">↗</div>
@@ -551,12 +565,13 @@
       <a class="project-item" href="#" target="_blank">
         <div class="project-num">02</div>
         <div class="project-info">
-          <h3>Scraping</h3>
-          <p>Ici pour un entrainement j'ai dû faire des injections SQL ou t'entative de scrap de datas privées.</p>
+          <h3>LeakRadar</h3>
+          <p>Outil de détection de fuites de données personnelles. Interroge plusieurs sources publiques pour vérifier si une adresse email ou un domaine a été compromis lors de brèches connues.</p>
           <div class="project-tags">
+            <span class="tag">Python</span>
+            <span class="tag">API REST</span>
             <span class="tag">Next.js</span>
-            <span class="tag">Tailwind</span>
-            <span class="tag">Vercel</span>
+            <span class="tag">Sécurité</span>
           </div>
         </div>
         <div class="project-arrow">↗</div>
@@ -565,12 +580,13 @@
       <a class="project-item" href="#" target="_blank">
         <div class="project-num">03</div>
         <div class="project-info">
-          <h3>Tools </h3>
-          <p>Dévelopement d'un tool aidant a la recherche de fuite de données.</p>
+          <h3>DataHarvest</h3>
+          <p>Scraper de bases de données publiques et légales destiné à la constitution de datasets d'entraînement pour modèles de machine learning. Collecte, nettoyage et export structuré des données.</p>
           <div class="project-tags">
-            <span class="tag">JavaScript</span>
-            <span class="tag">API REST</span>
-            <span class="tag">CSS</span>
+            <span class="tag">Python</span>
+            <span class="tag">Scrapy</span>
+            <span class="tag">Pandas</span>
+            <span class="tag">ML</span>
           </div>
         </div>
         <div class="project-arrow">↗</div>
@@ -590,16 +606,12 @@
         </p>
       </div>
       <div class="contact-right">
-        <a href="mailto:wazeLPdev@email.com" class="contact-link">
-          <span>wazeLPdev@email.com</span>
+        <a href="mailto:wazeLPdev@gmail.com" class="contact-link">
+          <span>wazeLPdev@gmail.com</span>
           <em>✉</em>
         </a>
         <a href="https://github.com/wazelp" target="_blank" class="contact-link">
           <span>github.com/wazelp</span>
-          <em>↗</em>
-        </a>
-        <a href="https://linkedin.com/in/tonprofil" target="_blank" class="contact-link">
-          <span>linkedin.com/in/tonprofil</span>
           <em>↗</em>
         </a>
       </div>
@@ -608,11 +620,65 @@
 
   <!-- FOOTER -->
   <footer>
-    <p>© 2026 WazeLP — Tous droits réservés</p>
-    <p>Fait avec soin · Switzerland</p>
+    <p>© 2026 waze LP — Tous droits réservés</p>
+    <p>Fait avec soin · France</p>
   </footer>
 
   <script>
+    /* --- ÉTOILES --- */
+    const canvas = document.getElementById('stars-canvas');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    const COUNT = 120;
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function initStars() {
+      stars = [];
+      for (let i = 0; i < COUNT; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.2 + 0.2,
+          alpha: Math.random() * 0.5 + 0.1,
+          dx: (Math.random() - 0.5) * 0.15,
+          dy: (Math.random() - 0.5) * 0.15,
+          dalpha: (Math.random() - 0.5) * 0.003
+        });
+      }
+    }
+
+    function drawStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const s of stars) {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;
+        ctx.fill();
+
+        s.x += s.dx;
+        s.y += s.dy;
+        s.alpha += s.dalpha;
+
+        if (s.alpha <= 0.05) s.dalpha = Math.abs(s.dalpha);
+        if (s.alpha >= 0.6)  s.dalpha = -Math.abs(s.dalpha);
+        if (s.x < 0) s.x = canvas.width;
+        if (s.x > canvas.width) s.x = 0;
+        if (s.y < 0) s.y = canvas.height;
+        if (s.y > canvas.height) s.y = 0;
+      }
+      requestAnimationFrame(drawStars);
+    }
+
+    resize();
+    initStars();
+    drawStars();
+    window.addEventListener('resize', () => { resize(); initStars(); });
+
+    /* --- FADE IN --- */
     const observer = new IntersectionObserver(
       entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
       { threshold: 0.1 }

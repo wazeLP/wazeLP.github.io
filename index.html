@@ -63,8 +63,6 @@ nav{
   letter-spacing:-.02em;
   color:var(--text);
   text-decoration:none;
-  cursor:pointer;
-  user-select:none;
 }
 
 .nav-links{display:flex;gap:2.5rem;list-style:none}
@@ -311,10 +309,20 @@ footer p{font-size:.75rem;color:var(--muted)}
 .fi{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
 .fi.on{opacity:1;transform:translateY(0)}
 
-#egg{
+@media(max-width:768px){
+  nav{padding:1rem 1.5rem}
+  .nav-links{display:none}
+  #hero,section{padding-left:1.5rem;padding-right:1.5rem}
+  #hero{padding-bottom:4rem}
+  .about-grid,.contact-grid{grid-template-columns:1fr;gap:2.5rem}
+  .project{grid-template-columns:40px 1fr}
+  .arrow{display:none}
+  footer{flex-direction:column;gap:.5rem;text-align:center}
+}
+</style>
   position:fixed;
   inset:0;
-  z-index:9999;
+  z-index:999;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -324,11 +332,7 @@ footer p{font-size:.75rem;color:var(--muted)}
   transition:opacity .8s ease;
 }
 #egg.egg-on{opacity:1;pointer-events:all}
-#egg-cv{
-  position:absolute;
-  top:0;left:0;
-  width:100%;height:100%;
-}
+#egg-cv{position:absolute;inset:0;width:100%;height:100%}
 #egg-inner{
   position:relative;
   z-index:2;
@@ -336,7 +340,7 @@ footer p{font-size:.75rem;color:var(--muted)}
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:1.5rem;
+  gap:1.2rem;
 }
 #egg-name{
   font-family:'Syne',sans-serif;
@@ -358,9 +362,9 @@ footer p{font-size:.75rem;color:var(--muted)}
   letter-spacing:.25em;
 }
 #egg-close{
-  position:fixed;
+  position:absolute;
   top:1.5rem;right:1.5rem;
-  z-index:10000;
+  z-index:3;
   background:none;
   border:1px solid rgba(255,255,255,.2);
   color:rgba(255,255,255,.4);
@@ -371,17 +375,6 @@ footer p{font-size:.75rem;color:var(--muted)}
   transition:all .2s;
 }
 #egg-close:hover{color:#fff;border-color:rgba(255,255,255,.6)}
-
-@media(max-width:768px){
-  nav{padding:1rem 1.5rem}
-  .nav-links{display:none}
-  #hero,section{padding-left:1.5rem;padding-right:1.5rem}
-  #hero{padding-bottom:4rem}
-  .about-grid,.contact-grid{grid-template-columns:1fr;gap:2.5rem}
-  .project{grid-template-columns:40px 1fr}
-  .arrow{display:none}
-  footer{flex-direction:column;gap:.5rem;text-align:center}
-}
 </style>
 </head>
 <body>
@@ -389,7 +382,7 @@ footer p{font-size:.75rem;color:var(--muted)}
 <canvas id="cv"></canvas>
 
 <nav>
-  <span class="logo" id="logo">waze LP</span>
+  <a href="#hero" class="logo">waze LP</a>
   <ul class="nav-links">
     <li><a href="#about">À propos</a></li>
     <li><a href="#skills">Compétences</a></li>
@@ -578,12 +571,16 @@ footer p{font-size:.75rem;color:var(--muted)}
 <script>
 const cv = document.getElementById('cv')
 const cx = cv.getContext('2d')
-let pts = [], mx = -9999, my = -9999
+let pts = []
+let mx = -9999, my = -9999
 
 addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY })
 addEventListener('mouseleave', () => { mx = -9999; my = -9999 })
 
-function resize() { cv.width = innerWidth; cv.height = innerHeight }
+function resize() {
+  cv.width = innerWidth
+  cv.height = innerHeight
+}
 
 function init() {
   pts = Array.from({length: 120}, () => ({
@@ -600,20 +597,24 @@ function init() {
 function draw() {
   cx.clearRect(0, 0, cv.width, cv.height)
   for (const p of pts) {
-    const ddx = mx - p.x, ddy = my - p.y
+    const ddx = mx - p.x
+    const ddy = my - p.y
     const dist = Math.sqrt(ddx * ddx + ddy * ddy)
     if (dist < 180 && dist > 0) {
-      const f = (1 - dist / 180) * 0.012
-      p.dx += (ddx / dist) * f
-      p.dy += (ddy / dist) * f
+      const force = (1 - dist / 180) * 0.012
+      p.dx += (ddx / dist) * force
+      p.dy += (ddy / dist) * force
     }
-    const spd = Math.sqrt(p.dx * p.dx + p.dy * p.dy)
-    if (spd > 0.6) { p.dx *= 0.6 / spd; p.dy *= 0.6 / spd }
+    const speed = Math.sqrt(p.dx * p.dx + p.dy * p.dy)
+    if (speed > 0.6) { p.dx *= 0.6 / speed; p.dy *= 0.6 / speed }
+
     cx.beginPath()
     cx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
     cx.fillStyle = `rgba(255,255,255,${p.a})`
     cx.fill()
-    p.x += p.dx; p.y += p.dy; p.a += p.da
+    p.x += p.dx
+    p.y += p.dy
+    p.a += p.da
     if (p.a <= 0.05) p.da = Math.abs(p.da)
     if (p.a >= 0.6)  p.da = -Math.abs(p.da)
     if (p.x < 0) p.x = cv.width
@@ -640,8 +641,7 @@ function eggInit() {
     a: Math.random() * 0.7 + 0.1,
     dx: (Math.random() - 0.5) * 0.3,
     dy: (Math.random() - 0.5) * 0.3,
-    da: (Math.random() - 0.5) * 0.004,
-    pink: Math.random() > 0.85
+    da: (Math.random() - 0.5) * 0.004
   }))
 }
 function eggDraw() {
@@ -649,7 +649,8 @@ function eggDraw() {
   for (const p of epts) {
     ex.beginPath()
     ex.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-    ex.fillStyle = p.pink ? `rgba(255,180,220,${p.a})` : `rgba(255,255,255,${p.a})`
+    const pink = Math.random() > 0.85
+    ex.fillStyle = pink ? `rgba(255,180,220,${p.a})` : `rgba(255,255,255,${p.a})`
     ex.fill()
     p.x += p.dx; p.y += p.dy; p.a += p.da
     if (p.a <= 0.05) p.da = Math.abs(p.da)
@@ -664,26 +665,26 @@ function eggDraw() {
 eggResize(); eggInit(); eggDraw()
 addEventListener('resize', () => { eggResize(); eggInit() })
 
-let clicks = 0, ctimer
-document.getElementById('logo').addEventListener('click', () => {
-  clicks++
-  clearTimeout(ctimer)
-  ctimer = setTimeout(() => { clicks = 0 }, 2000)
-  if (clicks >= 5) {
-    clicks = 0
-    document.getElementById('egg').classList.add('egg-on')
-  }
-})
-
-document.getElementById('egg-close').addEventListener('click', () => {
-  document.getElementById('egg').classList.remove('egg-on')
-})
-
 const io = new IntersectionObserver(
   es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('on') }),
   {threshold: 0.1}
 )
 document.querySelectorAll('.fi').forEach(el => io.observe(el))
+
+let clicks = 0, timer
+document.querySelector('.logo').addEventListener('click', e => {
+  e.preventDefault()
+  clicks++
+  clearTimeout(timer)
+  timer = setTimeout(() => { clicks = 0 }, 1800)
+  if (clicks >= 5) {
+    clicks = 0
+    document.getElementById('egg').classList.add('egg-on')
+  }
+})
+document.getElementById('egg-close').addEventListener('click', () => {
+  document.getElementById('egg').classList.remove('egg-on')
+})
 </script>
 </body>
 </html>

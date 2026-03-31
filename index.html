@@ -507,6 +507,10 @@ footer p{font-size:.75rem;color:var(--muted)}
 const cv = document.getElementById('cv')
 const cx = cv.getContext('2d')
 let pts = []
+let mx = -9999, my = -9999
+
+addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY })
+addEventListener('mouseleave', () => { mx = -9999; my = -9999 })
 
 function resize() {
   cv.width = innerWidth
@@ -528,6 +532,17 @@ function init() {
 function draw() {
   cx.clearRect(0, 0, cv.width, cv.height)
   for (const p of pts) {
+    const ddx = mx - p.x
+    const ddy = my - p.y
+    const dist = Math.sqrt(ddx * ddx + ddy * ddy)
+    if (dist < 180 && dist > 0) {
+      const force = (1 - dist / 180) * 0.012
+      p.dx += (ddx / dist) * force
+      p.dy += (ddy / dist) * force
+    }
+    const speed = Math.sqrt(p.dx * p.dx + p.dy * p.dy)
+    if (speed > 0.6) { p.dx *= 0.6 / speed; p.dy *= 0.6 / speed }
+
     cx.beginPath()
     cx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
     cx.fillStyle = `rgba(255,255,255,${p.a})`
